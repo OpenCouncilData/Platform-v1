@@ -65,6 +65,10 @@ This project runs on AWS.
   - For each topic, the scrapers pull data from one or more data sources, and pass them to the loaders, which save the data into the PostGIS database in a common format, using [Open Council Data Standards](http://standards.opencouncildata.org/) where possible
 - API contains the code to run the API which serves the data from that PostGIS database
 
+### Ingestor usage
+
+In bash, run `PGPASSWORD="<password>" node ./ingestors/index.js`
+
 ### PostGIS Table Structure
 
 `| type | geometry | date | payload |`

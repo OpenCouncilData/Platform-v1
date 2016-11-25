@@ -1,5 +1,6 @@
-// TODO: Reformat
+// TODO: Reformat bad data
 
-exports.transform = function transform(results) {
-  return results
+// Array<Zone> => Array<Zone>
+exports.transform = function transform(zones) {
+  return zones
 }

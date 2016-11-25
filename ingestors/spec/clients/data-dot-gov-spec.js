@@ -45,7 +45,7 @@ describe('lib/clients/data-dot-gov', () => {
 
     it('searches for multiple tags by ANDing them', () => {
       return client.searchPackagesByTags(['cat', 'cat-walking']).then(pkgs => {
-        expect(ckanMockClient.actionArgs).to.eql({ fq: `tags:(cat AND cat-walking)` })
+        expect(ckanMockClient.actionArgs).to.eql({ fq: `tags:(cat OR cat-walking)` })
       })
     })
 

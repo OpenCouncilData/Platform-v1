@@ -4,7 +4,7 @@ exports.searchPackagesByTags = function searchPackagesByTags(tags) {
   return new Promise((resolve, reject) => {
     const client = new CKAN.Client('https://data.gov.au');
 
-    const filterQuery = tags.join(' AND ')
+    const filterQuery = tags.join(' OR ')
 
     client.action('package_search', { fq: `tags:(${filterQuery})` }, function(err, body) {
       if(err) {

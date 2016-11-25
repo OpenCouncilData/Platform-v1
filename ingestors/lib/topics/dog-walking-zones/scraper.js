@@ -1,59 +1,9 @@
-const gov = require('../../clients/data-dot-gov')
-const request = require('request-promise')
+const govScraper = require('../../common/data-dot-gov-scraper')
 
-const keywords = ['walk', 'zones', 'off leash']
+const includeKeywords = ['walk', 'zones', 'off leash']
+const excludeKeywords = []
+const tags = ['dog']
 
-function isDefinitelyGeoJson(resource) {
-  return resource.format.toLowerCase() == 'geojson'
+exports.scrape = function() {
+  return govScraper.findZones(tags, includeKeywords, excludeKeywords)
 }
-
-function isProbablyGeoJson(resource) {
-  const isJson = resource.format.toLowerCase() == 'json'
-  const geoName = resource.name.toLowerCase().indexOf('geojson') > -1
-  const geoDescription = resource.description.toLowerCase().indexOf('geojson') > -1
-
-  return isJson && (geoName || geoDescription)
-}
-
-function isUsefulResource(resource) {
-  return isDefinitelyGeoJson(resource) || isProbablyGeoJson(resource)
-}
-
-function selectResourceForPackage(pkg) {
-  const useful = pkg.resources.filter(resource => isUsefulResource(resource))
-
-  return useful.length ? useful[0] : null
-}
-
-function isUsefulPackage(pkg) {
-  const fields = ['name', 'notes', 'title']
-
-  return fields.some(field =>
-    keywords.some(keyword =>
-      pkg[field].toLowerCase().indexOf(keyword.toLowerCase()) > -1
-    )
-  )
-}
-
-function getGeoJson(pair) {
-  return request({ uri: pair.resource.url, json: true }).then(geoJson => ({
-    package: pair.package,
-    resource: pair.resource,
-    geoJson: geoJson
-  }))
-}
-
-/*
- * Returns a promise of a list of { package, resource, geoJson }
- */
-function scrape() {
-  return gov.searchPackagesByTags(['dog'])
-    .then(pkgs => pkgs
-      .filter(isUsefulPackage)
-      .map(pkg => ({ package: pkg, resource: selectResourceForPackage(pkg) }))
-      .filter(pair => !!pair.resource)
-      .map(pair => getGeoJson(pair)))
-    .then(promises => Promise.all(promises))
-}
-
-exports.scrape = scrape
